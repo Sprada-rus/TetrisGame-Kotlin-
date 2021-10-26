@@ -24,7 +24,7 @@ class GameActivity : AppCompatActivity() {
         setContentView(R.layout.activity_game)
 
         appPreferences = AppPreferences(this)
-        appModel.setPreference(appPreferences)
+        appModel.setPreferences(appPreferences)
 
         val btnRestart = findViewById<Button>(R.id.btn_restart)
         tvHighScore = findViewById(R.id.high_score)

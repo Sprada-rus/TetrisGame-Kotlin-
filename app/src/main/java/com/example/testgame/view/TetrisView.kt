@@ -23,7 +23,7 @@ class TetrisView: View {
     private var lastMove: Long = 0
     private var model: AppModel? = null
     private var activity: GameActivity? = null
-    private val viewsHandler = ViewHundler(this)
+    private val viewHandler = ViewHandler(this)
     private var cellSize: Dimension = Dimension(0, 0)
     private var frameOffset: Dimension = Dimension(0, 0)
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
@@ -33,27 +33,7 @@ class TetrisView: View {
         private val BLOCK_OFFSET = 2
         private val FRAME_OFFSET_BASE = 10
     }
-
-    private class ViewHundler(private val owner: TetrisView) : Handler(){
-        override fun handleMessage(msg: Message) {
-            if (msg.what == 0){
-                if (owner.model != null){
-                    owner.model?.endGame()
-                    Toast.makeText(owner.activity, "Game Over", Toast.LENGTH_SHORT).show()
-                }
-            }
-            if (owner.model!!.isGameActive()){
-                owner.setGameCommandWithDelay(AppModel.Motions.DOWN)
-            }
-        }
-
-        fun sleep(delay: Long){
-            this.removeMessages(0)
-            sendEmptyMessageDelayed(0, delay)
-        }
-    }
-
-    fun setModel(model: AppModel){
+    fun setModel(model: AppModel) {
         this.model = model
     }
     fun setActivity(gameActivity: GameActivity) {
@@ -80,7 +60,7 @@ class TetrisView: View {
         }
 
         updateScores()
-        viewsHandler.sleep(DELAY.toLong())
+        viewHandler.sleep(DELAY.toLong())
     }
 
     private fun updateScores(){
@@ -88,17 +68,13 @@ class TetrisView: View {
         activity?.tvHighScore?.text = "${activity?.appPreferences?.getHighScore()}"
     }
 
-    override fun onDraw(canvas: Canvas?) {
+    override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        if (canvas != null) {
-            drawFrame(canvas)
-        }
+        drawFrame(canvas)
         if (model != null) {
             for (i in 0 until FieldConstants.ROW_COUNT.value) {
                 for (j in 0 until FieldConstants.COLUMN_COUNT.value) {
-                    if (canvas != null) {
-                        drawCell(canvas, i, j)
-                    }
+                    drawCell(canvas, i, j)
                 }
             }
         }
